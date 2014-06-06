@@ -42,19 +42,27 @@ rule('rule')
     ':ws', 
     ':punctuation.colon', 
     ':ws', 
-    ':prerequisite*', 
-    ':ws',
+    ':prerequisite*',
+    ':punctuation.ws.newline',
     ':recipe',
     passthrough)
-  // .match(
-  //   ':target', 
-  //   ':ws', 
-  //   ':punctuation.colon', 
-  //   ':ws', 
-  //   ':prerequisite*', 
-  //   ':ws', 
-  //   ':punctuation.semicolon', 
-  //   ':recipe');
+  .match(
+    ':target', 
+    ':ws', 
+    ':punctuation.colon', 
+    ':ws', 
+    ':prerequisite*', 
+    ':ws', 
+    ':punctuation.semicolon', 
+    ':recipe')
+  .match(
+    ':target', 
+    ':ws', 
+    ':punctuation.colon', 
+    ':ws', 
+    ':prerequisite*',
+    ':ws',
+    passthrough);
 
 /**
  * Inline rule.
@@ -73,7 +81,7 @@ rule('assignment')
     ':ws', 
     ':assignment.operator',
     ':ws',
-    ':expression',
+    ':expression+',
     passthrough);
 
 /**
@@ -109,15 +117,25 @@ rule('identifier')
  */
 
 rule('target')
-  .match(':function', passthrough)
-  .match(':pattern', passthrough);
+  .match(
+    ':target.special',
+    passthrough)
+  .match(
+    ':variable',
+    passthrough)
+  .match(
+    ':function', 
+    passthrough)
+  .match(
+    ':pattern', 
+    passthrough);
 
 /**
  * Pattern.
  */
 
 rule('pattern')
-  .match(/[^$\ ]+/, value);
+  .match(/[^$\s:]+/, value);
 
 /**
  * Prerequisite.
@@ -134,6 +152,12 @@ rule('prerequisite')
  */
 
 rule('variable')
+  .match(
+    ':punctuation.dollar', 
+    ':punctuation.bracket.begin', 
+    ':function.name',
+    ':punctuation.bracket.end',
+    passthrough)
   .match(
     ':variable.automatic', 
     passthrough);
@@ -186,7 +210,7 @@ rule('function')
 rule('arguments')
   .match(
     ':arguments.start',
-    ':arguments.end*',
+    ':arguments.end?',
     passthrough);
 
 /**
@@ -194,7 +218,10 @@ rule('arguments')
  */
 
 rule('arguments.start')
-  .match(':ws', ':expression+', passthrough);
+  .match(
+    ':ws', 
+    ':expression+', 
+    passthrough);
 
 /**
  * Rest of arguments.
@@ -205,23 +232,30 @@ rule('arguments.end')
     ':ws',
     ':punctuation.comma',
     ':ws',
-    ':expression+');
+    ':expression+',
+    passthrough);
 
 /**
  * Expression for arguments/variables.
  */
 
 rule('expression')
-  .match(':function', passthrough)
-  .match(':variable', passthrough)
-  .match(':text', passthrough);
+  .match(
+    ':function', 
+    passthrough)
+  .match(
+    ':variable', 
+    passthrough)
+  .match(
+    ':text', 
+    passthrough);
 
 /**
  * Text.
  */
 
 rule('text')
-  .match(/[^$]+/, value);
+  .match(/[^$\(\)\{\}]+/, value);
 
 /**
  * Function name.
@@ -293,21 +327,19 @@ rule('loop.end')
 
 rule('recipe')
   .match(
+    ':ws',
     ':punctuation.at', 
-    ':command', 
+    ':expression+', 
     passthrough)
   .match(
+    ':ws',
     ':punctuation.dash', 
-    ':command', 
+    ':expression+', 
     passthrough)
-  .match(':command', passthrough);
-
-/**
- * Command.
- */
-
-rule('command')
-  .match(/.+/, value);
+  .match(
+    ':ws',
+    ':expression+', 
+    passthrough);
 
 /**
  * Stem.
@@ -421,6 +453,13 @@ rule('punctuation.colon')
   .match(':', value);
 
 /**
+ * Semicolon.
+ */
+
+rule('punctuation.semicolon')
+  .match(';', value);
+
+/**
  * Equal.
  */
 
@@ -435,6 +474,23 @@ rule('punctuation.comma')
   .match(',', value);
 
 /**
+ * New line.
+ */
+
+rule('punctuation.newline')
+  .match(/\n/, value);
+
+/**
+ * White space ending in a new line.
+ */
+
+rule('punctuation.ws.newline')
+  .match(
+    ':ws', 
+    ':punctuation.newline', 
+    passthrough);
+
+/**
  * New line + tab.
  */
 
@@ -446,7 +502,7 @@ rule('punctuation.newline.tab')
  */
 
 rule('ws')
-  .match(/[\s\n]*/, value);
+  .match(/[\ \t]*/, value);
 
 /**
  * Keywords.
@@ -489,5 +545,5 @@ function keyword(name) {
 }
 
 function log() {
-  console.log(arguments);
+  console.log(JSON.stringify(arguments));
 }

@@ -13,11 +13,28 @@ describe('makefile', function(){
     test('BINS= node_modules/.bin');
     test('BINS = node_modules/.bin');
     test('BINS = ./bin node_modules/.bin');
+    test('BINS = $(NODE_MODULES)');
     test('BINS = $(NODE_MODULES)/.bin');
+    test('BINS = $(NODE_MODULES) $(COMPONENTS)');
+    test('SRC= $(wildcard index.js lib/*.js)');
+    test('tests ?= *');
+    test('TEST= http://localhost:4202');
+    test('PHANTOM= $(BINS)/mocha-phantomjs \\'
+      + '  --setting local-to-remote-url-access=true \\'
+      + '  --setting web-security=false');
   });
 
   describe('rule', function(){
     test('clean:\n  rm -rf tmp');
+    test('clean:\n  @rm -rf tmp');
+    test('clean:\n  -rm -rf tmp');
+    test('build: clean\n  -rm -rf tmp');
+    test('build: clean install\n  -rm -rf tmp');
+    test('build: clean install $(SRC)\n  @rm -rf tmp');
+    test('build:\n  @rm -rf tmp\n  @component install');
+    test('test: build server test-node\n  @$(PHANTOM) $(TEST)');
+    test('test-browser: test');
+    test('.PHONY: clean build test');
   });
 });
 
