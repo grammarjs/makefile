@@ -36,6 +36,7 @@ describe('makefile', function(){
     test('test: build server test-node\n  @$(PHANTOM) $(TEST)');
     test('test-browser: test');
     test('.PHONY: clean build test');
+    test('$(TEST): build\n  cd test && make $@');
   });
 
   describe('real world', function(){
