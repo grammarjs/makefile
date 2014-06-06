@@ -3,6 +3,7 @@ var assert = require('assert');
 var grammar = require('./');
 var Parser = require('grammarjs-recursive-parser');
 var parser = new Parser(grammar);
+var fs = require('fs');
 
 describe('makefile', function(){
   describe('comment', function(){
@@ -35,6 +36,10 @@ describe('makefile', function(){
     test('test: build server test-node\n  @$(PHANTOM) $(TEST)');
     test('test-browser: test');
     test('.PHONY: clean build test');
+  });
+
+  describe('real world', function(){
+    test(fs.readFileSync('Makefile', 'utf-8'));
   });
 });
 

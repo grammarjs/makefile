@@ -21,7 +21,7 @@ module.exports = grammar;
  */
 
 rule('makefile')
-  .match(':statement*', passthrough);
+  .match(':line*', ':statement*', passthrough);
 
 /**
  * For simplifying.
@@ -503,6 +503,13 @@ rule('punctuation.newline.tab')
 
 rule('ws')
   .match(/[\ \t]*/, value);
+
+/**
+ * Whitespace.
+ */
+
+rule('line')
+  .match(/[\s\n]/, value);
 
 /**
  * Keywords.
