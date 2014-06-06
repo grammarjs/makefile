@@ -21,12 +21,16 @@ module.exports = grammar;
  */
 
 rule('makefile')
-  // .match(
-  //   ':assignment*', 
-  //   passthrough)
-  .match(
-    ':rule*', 
-    value);
+  .match(':statement*', passthrough);
+
+/**
+ * For simplifying.
+ */
+
+rule('statement')
+  .match(':rule', passthrough)
+  .match(':assignment', passthrough)
+  .match(':comment', passthrough);
 
 /**
  * Rule.
@@ -53,21 +57,65 @@ rule('rule')
   //   ':recipe');
 
 /**
+ * Inline rule.
+ */
+
+rule('rule.inline')
+  .match('all:;echo $(foo)');
+
+/**
  * Assignment.
  */
 
 rule('assignment')
   .match(
-    ':target', 
+    ':identifier', 
     ':ws', 
-    ':punctuation.equals')
+    ':assignment.operator',
+    ':ws');
+
+/**
+ * Assignment operator.
+ */
+
+rule('assignment.operator')
+  .match('=', value)
+  .match('?=', value)
+  .match(':=', value)
+  .match('::=', value)
+  .match('+=', value)
+  .match('!=', value); // shell assignment operator
+
+/**
+ * Identifier.
+ */
+
+rule('identifier')
+  .match(/[a-zA-Z0-9_]+/, value);
+
+/**
+ * Substitution.
+ */
+
+// $(objects:.o=.c)
+// equals
+// $(patsubst %.o,%.c,$(objects))
+
 
 /**
  * Target.
  */
 
 rule('target')
-  .match(/\w+/, value);
+  .match(':function', passthrough)
+  .match(':pattern', passthrough);
+
+/**
+ * Pattern.
+ */
+
+rule('pattern')
+  .match(/[^$\ ]+/, value);
 
 /**
  * Prerequisite.
@@ -124,7 +172,7 @@ rule('function')
   .match(
     ':punctuation.dollar', 
     ':punctuation.bracket.begin', 
-    ':name',
+    ':function.name',
     ':arguments?',
     ':punctuation.bracket.end',
     passthrough);
@@ -135,9 +183,57 @@ rule('function')
 
 rule('arguments')
   .match(
-    ':ws', 
-    ':expression', 
+    ':arguments.start',
+    ':arguments.end*',
     passthrough);
+
+/**
+ * Start of arguments.
+ */
+
+rule('arguments.start')
+  .match(':ws', ':expression', passthrough);
+
+/**
+ * Rest of arguments.
+ */
+
+rule('arguments.end')
+  .match(
+    ':ws',
+    ':punctuation.comma',
+    ':ws',
+    ':expression');
+
+/**
+ * Expression for arguments/variables.
+ */
+
+rule('expression')
+  .match(':function', passthrough)
+  .match(':variable', passthrough)
+  .match(':text', passthrough);
+
+/**
+ * Text.
+ */
+
+rule('text')
+  .match(/[^$]+/, value);
+
+/**
+ * Function name.
+ */
+
+rule('function.name')
+  .match(/[\w-_]+/, value);
+
+/**
+ * Directive.
+ */
+
+rule('directive')
+  .match('vpath %   blish');
 
 /**
  * Conditional.
@@ -295,6 +391,20 @@ rule('punctuation.bracket.end')
   .match(')', value);
 
 /**
+ * Open curly bracket.
+ */
+
+rule('punctuation.bracket.curly.begin')
+  .match('{', value);
+
+/**
+ * Close curly bracket.
+ */
+
+rule('punctuation.bracket.curly.end')
+  .match('}', value);
+
+/**
  * Period.
  */
 
@@ -307,6 +417,20 @@ rule('punctuation.period')
 
 rule('punctuation.colon')
   .match(':', value);
+
+/**
+ * Equal.
+ */
+
+rule('punctuation.equal')
+  .match('=', value);
+
+/**
+ * Comma.
+ */
+
+rule('punctuation.comma')
+  .match(',', value);
 
 /**
  * New line + tab.
@@ -330,6 +454,9 @@ keyword('done');
 keyword('for');
 keyword('in');
 keyword('do');
+keyword('ifeq');
+keyword('endif');
+keyword('include');
 
 /**
  * Special targets.
