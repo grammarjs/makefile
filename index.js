@@ -72,7 +72,9 @@ rule('assignment')
     ':identifier', 
     ':ws', 
     ':assignment.operator',
-    ':ws');
+    ':ws',
+    ':expression',
+    passthrough);
 
 /**
  * Assignment operator.
