@@ -12,7 +12,12 @@ describe('makefile', function(){
   describe('assignment', function(){
     test('BINS= node_modules/.bin');
     test('BINS = node_modules/.bin');
+    test('BINS = ./bin node_modules/.bin');
     test('BINS = $(NODE_MODULES)/.bin');
+  });
+
+  describe('rule', function(){
+    test('clean:\n  rm -rf tmp');
   });
 });
 

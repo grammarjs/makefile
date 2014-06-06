@@ -194,7 +194,7 @@ rule('arguments')
  */
 
 rule('arguments.start')
-  .match(':ws', ':expression', passthrough);
+  .match(':ws', ':expression+', passthrough);
 
 /**
  * Rest of arguments.
@@ -205,7 +205,7 @@ rule('arguments.end')
     ':ws',
     ':punctuation.comma',
     ':ws',
-    ':expression');
+    ':expression+');
 
 /**
  * Expression for arguments/variables.
