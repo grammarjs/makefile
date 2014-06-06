@@ -20,6 +20,8 @@ describe('makefile', function(){
     test('SRC= $(wildcard index.js lib/*.js)');
     test('tests ?= *');
     test('TEST= http://localhost:4202');
+    // TODO: handle quotes
+    test('BROWSERS ?= \'chrome, safari, firefox\'');
     test('PHANTOM= $(BINS)/mocha-phantomjs \\'
       + '  --setting local-to-remote-url-access=true \\'
       + '  --setting web-security=false');
@@ -37,6 +39,7 @@ describe('makefile', function(){
     test('test-browser: test');
     test('.PHONY: clean build test');
     test('$(TEST): build\n  cd test && make $@');
+    test('%:\n  @component install $@');
   });
 
   describe('real world', function(){
