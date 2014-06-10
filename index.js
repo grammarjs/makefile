@@ -4,9 +4,10 @@
  */
 
 var Grammar = require('grammarjs-grammar');
-var Token = require('languagejs-token');
+var Token = require('grammarjs-token');
+var punctuation = require('grammarjs-punctuation');
 var grammar = new Grammar('makefile');
-var rule = grammar.expression; // grammar.rule;
+var rule = grammar.rule;
 var value = Token.value;
 var passthrough = Token.passthrough;
 
@@ -17,11 +18,20 @@ var passthrough = Token.passthrough;
 module.exports = grammar;
 
 /**
+ * Plugins.
+ */
+
+grammar.use(punctuation());
+
+/**
  * Makefile.
  */
 
 rule('makefile')
-  .match(':line*', ':statement*', passthrough);
+  .match(
+    ':line*', 
+    ':statement*', 
+    passthrough);
 
 /**
  * For simplifying.

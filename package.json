@@ -1,10 +1,13 @@
 {
-  "name": "syntaxjs-makefile",
+  "name": "grammarjs-makefile",
   "version": "0.0.1",
+  "description": "Makefile Grammar",
+  "keywords": ["peg", "grammar", "makefile"],
   "main": "./index.js",
   "dependencies": {
     "grammarjs-grammar": "*",
-    "languagejs-token": "*"
+    "grammarjs-token": "*",
+    "grammarjs-punctuation": "*"
   },
   "devDependencies": {
     "grammarjs-recursive-parser": "*"

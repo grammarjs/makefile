@@ -1,0 +1,19 @@
+{
+  "name": "makefile",
+  "repo": "grammarjs/makefile",
+  "description": "Makefile Grammar",
+  "version": "0.0.1",
+  "keywords": ["peg", "grammar", "makefile"],
+  "dependencies": {
+    "grammarjs/grammar": "*",
+    "grammarjs/token": "*",
+    "grammarjs/punctuation": "*"
+  },
+  "development": {
+    "grammarjs/recursive-parser": "*",
+    "visionmedia/mocha": "*",
+    "component/assert": "*"
+  },
+  "scripts": ["index.js"],
+  "license": "MIT"
+}
